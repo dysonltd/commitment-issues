@@ -1,0 +1,8 @@
+[template]
+cargo_generate_version = ">=0.9.0"
+
+[hooks]
+init = ["init.rhai"]
+
+[conditional.'is_init']
+ignore = ["Cargo.toml.liquid", "src/", ".gitignore"]

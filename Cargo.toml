@@ -1,0 +1,16 @@
+[package]
+name = "commitment-issues"
+version = "0.1.0"
+edition = "2021"
+authors = ["Pete Kubiak <peter.kubiak@dyson.com>"]
+
+[dependencies]
+chrono = "0.4"
+git2 = "0.19.0"
+proc-macro2 = "1.0"
+quote = "1.0"
+regex = "1.11"
+syn = "2.0"
+
+[lib]
+proc-macro = true
