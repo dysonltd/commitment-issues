@@ -1,0 +1,8 @@
+# Default owners for all files
+* @petekubiak @ScottGibb @jamessizeland
+
+# Override the default owners and remove ownership for specific files
+Cargo.toml
+
+# Override the default owners and remove ownership for the .github/workflows directory
+.github/workflows/

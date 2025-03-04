@@ -118,6 +118,16 @@ Future work will aim to make it possible to configure the structure of the metad
 
 **TODO!** This crate has not yet been tested for a Windows or Mac target.
 
+## Running your Linter Locally
+
+This project uses [MegaLinter](https://github.com/oxsecurity/megalinter) which provides linters for various different file formats and languages. When a Pull request to main is done, the linters will run and ensure the codebase is in good standing. It is recommended that you run the linter locally beforehand as it can sometimes autofix common mistakes.
+
+```bash
+npx mega-linter-runner
+```
+
+You will need to have docker and Node installed to use this, more information can be found on their [repo](https://github.com/oxsecurity/megalinter)
+
 ## Future work
 
 - Allow configuration of the metadata structure through a `.toml` file
