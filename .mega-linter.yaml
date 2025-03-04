@@ -45,3 +45,9 @@ RUST_CLIPPY_ARGUMENTS:
   - "--"
   - "-D"
   - "warnings"
+
+PRE_COMMANDS:
+  - command: apt-get install openssl
+    cwd: root # Will be run at the root of MegaLinter docker image
+    secured_env: true
+    run_before_linters: True # Will be run before the execution of the linters themselves, required for git2 openssl dependency
