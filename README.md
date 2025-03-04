@@ -5,6 +5,7 @@
 Embed git repository metadata into compiled binaries.
 
 ## Features
+
 - `no_std` compatible
 - Works on both natively-compiled and cross-compiled binaries
 - Works for baremetal, embedded OS and full OS environments
@@ -102,14 +103,14 @@ objdump -s <path/to/binary> | grep "section \.metadata" -A 20
 The metadata is an 80-byte block beginning with the sequence 0xFFFEFDFC and ending with the sequence 0x01020304 (inclusive).
 The data contained within is as follows:
 
-| Field | Size(bytes) | Description |
-| --- | ---: | --- |
-| Schema version | 1 | Placeholder for version numbering for metadata schema. Currently fixed |
-| Build timestamp | 20 | Timestamp when the last build occurred in RFC3339 format |
-| Commit hash | 10 | Short hash of the active commit |
-| Dirty build | 1 | Boolean value representing whether the build contains uncommitted changes |
-| Last tag | 20 | Most recent relevant tag in the active commit's history |
-| Author | 20 | Author of the active commit |
+| Field           | Size(bytes) | Description                                                               |
+|-----------------|------------:|---------------------------------------------------------------------------|
+| Schema version  |           1 | Placeholder for version numbering for metadata schema. Currently fixed    |
+| Build timestamp |          20 | Timestamp when the last build occurred in RFC3339 format                  |
+| Commit hash     |          10 | Short hash of the active commit                                           |
+| Dirty build     |           1 | Boolean value representing whether the build contains uncommitted changes |
+| Last tag        |          20 | Most recent relevant tag in the active commit's history                   |
+| Author          |          20 | Author of the active commit                                               |
 
 Future work will include adding a command line tool for reading metadata from a "raw" binary and presenting it in a human-readable format.
 
