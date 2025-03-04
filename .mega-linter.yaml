@@ -47,7 +47,7 @@ RUST_CLIPPY_ARGUMENTS:
   - "warnings"
 
 PRE_COMMANDS:
-  - command: apk add openssl libssl-dev
+  - command: apk add openssl libressl-dev
     cwd: root # Will be run at the root of MegaLinter docker image
     secured_env: true
     continue_if_failed: false
