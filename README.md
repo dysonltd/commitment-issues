@@ -86,7 +86,7 @@ This invokes the `include_metadata!()` macro, which generates a module called `m
 As well as containing the metadata section, the `metadata` module exposes a set of macros to access the various fields of the metadata section from within your code.
 The template's [main.rs](https://github.com/dysonltd/commitment-issues/blob/main/template/src/main.rs) file gives an example of how these macros can be used.
 
-#### Compile and run
+#### Standard Compile and run
 
 Compile and run your project using your standard process.
 
