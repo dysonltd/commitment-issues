@@ -1,5 +1,7 @@
 # Commitment issues
 
+[![MegaLinter](https://github.com/dysonltd/commitment-issues/actions/workflows/mega-linter.yaml/badge.svg)](https://github.com/dysonltd/commitment-issues/actions/workflows/mega-linter.yaml) [![Continuous Build](https://github.com/dysonltd/commitment-issues/actions/workflows/continuous-build.yaml/badge.svg)](https://github.com/dysonltd/commitment-issues/actions/workflows/continuous-build.yaml)
+
 Embed git repository metadata into compiled binaries.
 
 ## Features
