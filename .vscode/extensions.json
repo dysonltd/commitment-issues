@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "DavidAnson.vscode-markdownlint",
+    "redhat.vscode-yaml",
+    "esbenp.prettier-vscode",
+    "darkriszty.markdown-table-prettify",
+    "tamasfe.even-better-toml",
+    "github.vscode-github-actions",
+    "jebbs.plantuml",
+    "qhoekman.language-plantuml",
+    "dustypomerleau.rust-syntax",
+    "rust-lang.rust-analyzer"
+  ]
+}

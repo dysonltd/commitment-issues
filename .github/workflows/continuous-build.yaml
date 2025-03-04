@@ -1,0 +1,19 @@
+---
+name: Continuous Build
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_call:
+
+jobs:
+  All_Targets:
+    name: All Targets Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: cargo build --all-targets --all-features
