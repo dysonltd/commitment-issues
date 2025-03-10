@@ -6,7 +6,7 @@ authors = ["Pete Kubiak <peter.kubiak@dyson.com>"]
 
 [dependencies]
 chrono = "0.4"
-git2 = "0.19.0"
+git2 = "0.20.0"
 proc-macro2 = "1.0"
 quote = "1.0"
 regex = "1.11"
