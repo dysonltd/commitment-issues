@@ -1,0 +1,5 @@
+[target.aarch64-apple-darwin]
+# Do NOT set rustflags for -T on this target
+
+[target.x86_64-unknown-linux-gnu]
+rustflags = ["-Tmetadata.x"]
