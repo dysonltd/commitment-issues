@@ -145,12 +145,33 @@ fn get_repo() -> Result<Repository, Error> {
             "key \"workspace_root\" not found in cargo metadata".to_owned(),
         ))?
         .as_str();
-    Repository::open(primary_package_dir).map_err(|error| {
-        Error::new(
-            Span::call_site(),
-            format!("failed to open repository at location {primary_package_dir}: {error}"),
-        )
-    })
+
+    Repository::open(primary_package_dir)
+    .or_else(|first_error| {
+        // Try parent directory if opening the initial directory fails
+        let parent = Path::new(primary_package_dir).parent();
+        if let Some(parent_dir) = parent {
+            Repository::open(parent_dir).map_err(|second_error| {
+                Error::new(
+                    Span::call_site(),
+                    format!(
+                        "failed to open repository at location {primary_package_dir}: {first_error}, \
+                        also failed at parent directory {:?}: {second_error}",
+                        parent_dir,
+                    ),
+                )
+            })
+        } else {
+            // No parent directory exists
+            Err(Error::new(
+                Span::call_site(),
+                format!(
+                    "failed to open repository at location {primary_package_dir}: {first_error}, \
+                    and no parent directory available"
+                ),
+            ))
+        }
+    })?;
 }
 
 fn get_last_commit(repo: &Repository) -> Result<Commit, Error> {
