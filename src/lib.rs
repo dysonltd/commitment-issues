@@ -146,26 +146,43 @@ fn get_repo() -> Result<Repository, Error> {
         ))?
         .as_str();
 
-    Repository::open(primary_package_dir)
-        .or_else({ Repository::open(parent_path(primary_package_dir)) })
+    Repository::open(primary_package_dir).or_else(|first_error| {
+        match parent_path(primary_package_dir) {
+            Ok(parent) => Repository::open(parent).map_err(|second_error| {
+                Error::new(
+                    Span::call_site(),
+                    format!(
+                    "failed to open repository at location {primary_package_dir}: {first_error}; \
+                     also failed at parent path {parent}: {second_error}"
+                ),
+                )
+            }),
+            Err(parent_path_error) => Err(Error::new(
+                Span::call_site(),
+                format!(
+                    "failed to open repository at location {primary_package_dir}: {first_error}; \
+                 also failed to determine parent path: {parent_path_error}"
+                ),
+            )),
+        }
+    })
 }
 
-fn parent_path(path: &str) -> Option<&str> {
-    // Find the last separator in either style
+fn parent_path(path: &str) -> Result<&str, Error> {
     let pos_slash = path.rfind('/');
     let pos_backslash = path.rfind('\\');
     let last = match (pos_slash, pos_backslash) {
         (Some(s), Some(b)) => core::cmp::max(s, b),
         (Some(s), None) => s,
         (None, Some(b)) => b,
-        (None, None) => return None,
+        (None, None) => {
+            return Err(Error::new(
+                Span::call_site(),
+                "failed to find parent path".to_string(),
+            ))
+        }
     };
-    if last == 0 {
-        // Only root component, e.g. "/foo" or "\foo"
-        Some(&path[..1])
-    } else {
-        Some(&path[..last])
-    }
+    Ok(&path[..last])
 }
 
 fn get_last_commit(repo: &Repository) -> Result<Commit, Error> {
