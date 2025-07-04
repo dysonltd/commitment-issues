@@ -149,7 +149,7 @@ fn get_repo() -> Result<Repository, Error> {
     Repository::open(primary_package_dir)
     .or_else(|first_error| {
         // Try parent directory if opening the initial directory fails
-        let parent = Path::new(primary_package_dir).parent();
+        let parent = parent_path(primary_package_dir).unwrap();
         if let Some(parent_dir) = parent {
             Repository::open(parent_dir).map_err(|second_error| {
                 Error::new(
@@ -172,6 +172,24 @@ fn get_repo() -> Result<Repository, Error> {
             ))
         }
     })?;
+}
+
+fn parent_path(path: &str) -> Option<&str> {
+    // Find the last separator in either style
+    let pos_slash = path.rfind('/');
+    let pos_backslash = path.rfind('\\');
+    let last = match (pos_slash, pos_backslash) {
+        (Some(s), Some(b)) => core::cmp::max(s, b),
+        (Some(s), None) => s,
+        (None, Some(b)) => b,
+        (None, None) => return None,
+    };
+    if last == 0 {
+        // Only root component, e.g. "/foo" or "\foo"
+        Some(&path[..1])
+    } else {
+        Some(&path[..last])
+    }
 }
 
 fn get_last_commit(repo: &Repository) -> Result<Commit, Error> {
