@@ -147,31 +147,7 @@ fn get_repo() -> Result<Repository, Error> {
         .as_str();
 
     Repository::open(primary_package_dir)
-    .or_else(|first_error| {
-        // Try parent directory if opening the initial directory fails
-        let parent = parent_path(primary_package_dir).unwrap();
-        if let Some(parent_dir) = parent {
-            Repository::open(parent_dir).map_err(|second_error| {
-                Error::new(
-                    Span::call_site(),
-                    format!(
-                        "failed to open repository at location {primary_package_dir}: {first_error}, \
-                        also failed at parent directory {:?}: {second_error}",
-                        parent_dir,
-                    ),
-                )
-            })
-        } else {
-            // No parent directory exists
-            Err(Error::new(
-                Span::call_site(),
-                format!(
-                    "failed to open repository at location {primary_package_dir}: {first_error}, \
-                    and no parent directory available"
-                ),
-            ))
-        }
-    })?;
+        .or_else({ Repository::open(parent_path(primary_package_dir)) })
 }
 
 fn parent_path(path: &str) -> Option<&str> {
