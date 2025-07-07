@@ -146,16 +146,10 @@ fn get_repo() -> Result<Repository, Error> {
             "key \"workspace_root\" not found in cargo metadata".to_owned(),
         ))?
         .as_str();
-    let repository_path = parent_until_git(primary_package_dir)?;
-    Ok(Repository::open(repository_path).map_err(|err| {
-        Error::new(
-            Span::call_site(),
-            format!("failed to open repository at location {repository_path}: {err};"),
-        )
-    })?)
+    Ok(parent_until_git(primary_package_dir)?)
 }
 
-fn parent_until_git(mut path: &str) -> Result<&str, Error> {
+fn parent_until_git(mut path: &str) -> Result<Repository, Error> {
     let mut depth = 0;
     loop {
         depth += 1;
@@ -172,23 +166,9 @@ fn parent_until_git(mut path: &str) -> Result<&str, Error> {
         // Take the parent part
         path = &path[..last];
 
-        // Now, find the last segment (after the previous path separator)
-        // (Edge case: root paths)
-        let seg_start = {
-            let prev_slash = path.rfind('/');
-            let prev_backslash = path.rfind('\\');
-            match (prev_slash, prev_backslash) {
-                (Some(s), Some(b)) => core::cmp::max(s, b) + 1,
-                (Some(s), None) => s + 1,
-                (None, Some(b)) => b + 1,
-                (None, None) => 0,
-            }
-        };
-
-        let last_segment = &path[seg_start..];
-
-        if last_segment == ".git" {
-            return Ok(path);
+        // If this is a valid repository return it otherwise keep going
+        if Repository::open(path).is_ok() {
+            return Ok(Repository::open(path).expect("This should never fail"));
         }
     }
     Err(Error::new(
