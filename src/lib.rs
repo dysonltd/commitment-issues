@@ -146,12 +146,19 @@ fn get_repo() -> Result<Repository, Error> {
             "key \"workspace_root\" not found in cargo metadata".to_owned(),
         ))?
         .as_str();
-    let git_repo_path = parent_until_git(primary_package_dir)?;
-    Repository::open(primary_package_dir)?;
+    let repository_path = parent_until_git(primary_package_dir)?;
+    Ok(Repository::open(repository_path).map_err(|err| {
+        Error::new(
+            Span::call_site(),
+            format!("failed to open repository at location {repository_path}: {err};"),
+        )
+    })?)
 }
 
 fn parent_until_git(mut path: &str) -> Result<&str, Error> {
+    let mut depth = 0;
     loop {
+        depth += 1;
         // Find last path separator position
         let pos_slash = path.rfind('/');
         let pos_backslash = path.rfind('\\');
@@ -184,7 +191,10 @@ fn parent_until_git(mut path: &str) -> Result<&str, Error> {
             return Ok(path);
         }
     }
-    Err("no parent ending with .git found")
+    Err(Error::new(
+        Span::call_site(),
+        format!("failed to find .git folder after {depth} parents"),
+    ))
 }
 
 fn get_last_commit(repo: &Repository) -> Result<Commit, Error> {
