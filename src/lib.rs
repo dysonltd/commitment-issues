@@ -167,8 +167,9 @@ fn find_valid_git_root(mut path: &str) -> Result<Repository, Error> {
         path = &path[..last];
 
         // If this is a valid repository return it otherwise keep going
-        if Repository::open(path).is_ok() {
-            return Ok(Repository::open(path).expect("This should never fail"));
+        if let Ok(repo) = Repository::open(path) {
+            // Tell build.rs what the path is?
+            return Ok(repo);
         }
     }
     Err(Error::new(
