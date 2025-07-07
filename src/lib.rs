@@ -146,10 +146,10 @@ fn get_repo() -> Result<Repository, Error> {
             "key \"workspace_root\" not found in cargo metadata".to_owned(),
         ))?
         .as_str();
-    Ok(parent_until_git(primary_package_dir)?)
+    Ok(find_valid_git_root(primary_package_dir)?)
 }
 
-fn parent_until_git(mut path: &str) -> Result<Repository, Error> {
+fn find_valid_git_root(mut path: &str) -> Result<Repository, Error> {
     let mut depth = 0;
     loop {
         depth += 1;
