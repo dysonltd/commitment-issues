@@ -146,44 +146,45 @@ fn get_repo() -> Result<Repository, Error> {
             "key \"workspace_root\" not found in cargo metadata".to_owned(),
         ))?
         .as_str();
-
-    Repository::open(primary_package_dir).or_else(|first_error| {
-        match parent_path(primary_package_dir) {
-            Ok(parent) => Repository::open(parent).map_err(|second_error| {
-                Error::new(
-                    Span::call_site(),
-                    format!(
-                    "failed to open repository at location {primary_package_dir}: {first_error}; \
-                     also failed at parent path {parent}: {second_error}"
-                ),
-                )
-            }),
-            Err(parent_path_error) => Err(Error::new(
-                Span::call_site(),
-                format!(
-                    "failed to open repository at location {primary_package_dir}: {first_error}; \
-                 also failed to determine parent path: {parent_path_error}"
-                ),
-            )),
-        }
-    })
+    let git_repo_path = parent_until_git(primary_package_dir)?;
+    Repository::open(primary_package_dir)?;
 }
 
-fn parent_path(path: &str) -> Result<&str, Error> {
-    let pos_slash = path.rfind('/');
-    let pos_backslash = path.rfind('\\');
-    let last = match (pos_slash, pos_backslash) {
-        (Some(s), Some(b)) => core::cmp::max(s, b),
-        (Some(s), None) => s,
-        (None, Some(b)) => b,
-        (None, None) => {
-            return Err(Error::new(
-                Span::call_site(),
-                "failed to find parent path".to_string(),
-            ))
+fn parent_until_git(mut path: &str) -> Result<&str, Error> {
+    loop {
+        // Find last path separator position
+        let pos_slash = path.rfind('/');
+        let pos_backslash = path.rfind('\\');
+        let last = match (pos_slash, pos_backslash) {
+            (Some(s), Some(b)) => core::cmp::max(s, b),
+            (Some(s), None) => s,
+            (None, Some(b)) => b,
+            (None, None) => break, // Reached the top level
+        };
+
+        // Take the parent part
+        path = &path[..last];
+
+        // Now, find the last segment (after the previous path separator)
+        // (Edge case: root paths)
+        let seg_start = {
+            let prev_slash = path.rfind('/');
+            let prev_backslash = path.rfind('\\');
+            match (prev_slash, prev_backslash) {
+                (Some(s), Some(b)) => core::cmp::max(s, b) + 1,
+                (Some(s), None) => s + 1,
+                (None, Some(b)) => b + 1,
+                (None, None) => 0,
+            }
+        };
+
+        let last_segment = &path[seg_start..];
+
+        if last_segment == ".git" {
+            return Ok(path);
         }
-    };
-    Ok(&path[..last])
+    }
+    Err("no parent ending with .git found")
 }
 
 fn get_last_commit(repo: &Repository) -> Result<Commit, Error> {
