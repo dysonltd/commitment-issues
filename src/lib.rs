@@ -155,6 +155,23 @@ fn get_repo() -> Result<Repository, Error> {
     })
 }
 
+#[proc_macro]
+fn find_valid_git_root(mut path: PathBuf) -> Result<String, &'static str> {
+    loop {
+        // If this is a valid repository return it otherwise keep going
+        if path.join(".git").exists() {
+            let path = path.to_str().unwrap();
+            unsafe {
+                std::env::set_var("GIT_DIR", path);
+            }
+            return Ok(path.to_string());
+        }
+        if !path.pop() {
+            return Err("failed to find .git folder");
+        }
+    }
+}
+
 fn get_last_commit(repo: &Repository) -> Result<Commit, Error> {
     let hash = repo
         .head()
