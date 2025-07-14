@@ -183,6 +183,7 @@ fn find_valid_git_root_inner() -> Result<String, &'static str> {
         }
     }
 }
+
 fn get_last_commit(repo: &Repository) -> Result<Commit<'_>, Error> {
     let hash = repo
         .head()
