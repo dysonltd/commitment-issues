@@ -134,7 +134,7 @@ fn get_repo() -> Result<Repository, Error> {
             format!("failed to generate Regex: {error}"),
         )
     })?;
-    let primary_package_dir = pattern
+    pattern
         .captures(cargo_metadata)
         .ok_or(Error::new(
             Span::call_site(),
@@ -146,36 +146,13 @@ fn get_repo() -> Result<Repository, Error> {
             "key \"workspace_root\" not found in cargo metadata".to_owned(),
         ))?
         .as_str();
-    find_valid_git_root(primary_package_dir)
-}
 
-fn find_valid_git_root(mut path: &str) -> Result<Repository, Error> {
-    let mut depth = 0;
-    loop {
-        depth += 1;
-        // Find last path separator position
-        let pos_slash = path.rfind('/');
-        let pos_backslash = path.rfind('\\');
-        let last = match (pos_slash, pos_backslash) {
-            (Some(s), Some(b)) => core::cmp::max(s, b),
-            (Some(s), None) => s,
-            (None, Some(b)) => b,
-            (None, None) => break, // Reached the top level
-        };
-
-        // Take the parent part
-        path = &path[..last];
-
-        // If this is a valid repository return it otherwise keep going
-        if let Ok(repo) = Repository::open(path) {
-            // Tell build.rs what the path is?
-            return Ok(repo);
-        }
-    }
-    Err(Error::new(
-        Span::call_site(),
-        format!("failed to find .git folder after {depth} parents"),
-    ))
+    Repository::open_from_env().map_err(|error| {
+        Error::new(
+            Span::call_site(),
+            format!("failed to find Git Repo: {error}"),
+        )
+    })
 }
 
 fn get_last_commit(repo: &Repository) -> Result<Commit, Error> {
