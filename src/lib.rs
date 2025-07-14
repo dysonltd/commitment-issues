@@ -147,7 +147,14 @@ fn get_repo() -> Result<Repository, Error> {
         ))?
         .as_str();
 
-    Repository::open_from_env().map_err(|error| {
+    let git_root = find_valid_git_root_inner().map_err(|error| {
+        Error::new(
+            Span::call_site(),
+            format!("failed to find Git Repo: {error}"),
+        )
+    })?;
+
+    Repository::open(git_root).map_err(|error| {
         Error::new(
             Span::call_site(),
             format!("failed to find Git Repo: {error}"),
@@ -156,23 +163,27 @@ fn get_repo() -> Result<Repository, Error> {
 }
 
 #[proc_macro]
-fn find_valid_git_root(mut path: PathBuf) -> Result<String, &'static str> {
+pub fn find_valid_git_root(_: TokenStream) -> TokenStream {
+    match find_valid_git_root_inner() {
+        Ok(path) => quote! {#path}.into(),
+        Err(_) => panic!("Cant find .git folder!"),
+    }
+}
+
+fn find_valid_git_root_inner() -> Result<String, &'static str> {
+    let mut path = std::env::current_dir().unwrap();
     loop {
         // If this is a valid repository return it otherwise keep going
         if path.join(".git").exists() {
             let path = path.to_str().unwrap();
-            unsafe {
-                std::env::set_var("GIT_DIR", path);
-            }
             return Ok(path.to_string());
         }
         if !path.pop() {
-            return Err("failed to find .git folder");
+            return Err("Cant find .git folder!");
         }
     }
 }
-
-fn get_last_commit(repo: &Repository) -> Result<Commit, Error> {
+fn get_last_commit(repo: &Repository) -> Result<Commit<'_>, Error> {
     let hash = repo
         .head()
         .map_err(|error| Error::new(Span::call_site(), format!("failed to get HEAD: {error}")))?
