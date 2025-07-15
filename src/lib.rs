@@ -154,7 +154,7 @@ fn get_repo() -> Result<Repository, Error> {
         )
     })?;
 
-    Repository::open(git_root).map_err(|error| {
+    Repository::open(&git_root).map_err(|error| {
         Error::new(
             Span::call_site(),
             format!("failed to open repository at {git_root}: {error}"),
