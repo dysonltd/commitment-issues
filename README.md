@@ -119,7 +119,7 @@ Future work will aim to make it possible to configure the structure of the metad
 
 ## Windows targets
 
-**TODO!** This crate has not yet been tested for a Windows.
+**TODO!** This crate has not yet been tested for a Windows target.
 
 ## Running your Linter Locally
 
