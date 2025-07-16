@@ -52,7 +52,7 @@ pub fn include_metadata(_: TokenStream) -> TokenStream {
                 footer: [u8; 4],
             }
 
-            #[cfg_attr(target_os = "macos", link_section = "__DATA,.metadata")]
+            #[cfg_attr(target_os = "macos", link_section = "__DATA,__metadata")]
             #[cfg_attr(not(target_os = "macos"), link_section = ".metadata")]
             #[used]
             static METADATA: Metadata =
