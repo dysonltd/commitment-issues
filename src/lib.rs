@@ -52,7 +52,8 @@ pub fn include_metadata(_: TokenStream) -> TokenStream {
                 footer: [u8; 4],
             }
 
-            #[link_section = ".metadata"]
+            #[cfg_attr(target_os = "macos", link_section = "__DATA,__metadata")]
+            #[cfg_attr(not(target_os = "macos"), link_section = ".metadata")]
             #[used]
             static METADATA: Metadata =
                     Metadata {
@@ -133,7 +134,7 @@ fn get_repo() -> Result<Repository, Error> {
             format!("failed to generate Regex: {error}"),
         )
     })?;
-    let primary_package_dir = pattern
+    pattern
         .captures(cargo_metadata)
         .ok_or(Error::new(
             Span::call_site(),
@@ -145,15 +146,45 @@ fn get_repo() -> Result<Repository, Error> {
             "key \"workspace_root\" not found in cargo metadata".to_owned(),
         ))?
         .as_str();
-    Repository::open(primary_package_dir).map_err(|error| {
+
+    let git_root = find_valid_git_root_inner().map_err(|error| {
         Error::new(
             Span::call_site(),
-            format!("failed to open repository at location {primary_package_dir}: {error}"),
+            format!("failed to find Git Repo: {error}"),
+        )
+    })?;
+
+    Repository::open(&git_root).map_err(|error| {
+        Error::new(
+            Span::call_site(),
+            format!("failed to open repository at {git_root}: {error}"),
         )
     })
 }
 
-fn get_last_commit(repo: &Repository) -> Result<Commit, Error> {
+#[proc_macro]
+pub fn find_valid_git_root(_: TokenStream) -> TokenStream {
+    match find_valid_git_root_inner() {
+        Ok(path) => quote! {#path}.into(),
+        Err(_) => panic!("Cant find .git folder!"),
+    }
+}
+
+fn find_valid_git_root_inner() -> Result<String, &'static str> {
+    let mut path = std::env::current_dir().unwrap();
+    loop {
+        // If this is a valid repository return it otherwise keep going
+        if path.join(".git").exists() {
+            let path = path.to_str().unwrap();
+            return Ok(path.to_string());
+        }
+        if !path.pop() {
+            return Err("Cant find .git folder!");
+        }
+    }
+}
+
+fn get_last_commit(repo: &Repository) -> Result<Commit<'_>, Error> {
     let hash = repo
         .head()
         .map_err(|error| Error::new(Span::call_site(), format!("failed to get HEAD: {error}")))?

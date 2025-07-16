@@ -117,9 +117,9 @@ Future work will include adding a command line tool for reading metadata from a 
 The current structure of the metadata is fixed.
 Future work will aim to make it possible to configure the structure of the metadata through a configuration file.
 
-## Windows & Mac targets
+## Windows targets
 
-**TODO!** This crate has not yet been tested for a Windows or Mac target.
+**TODO!** This crate has not yet been tested for a Windows target.
 
 ## Running your Linter Locally
 
