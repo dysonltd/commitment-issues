@@ -1,5 +1,5 @@
 # Default owners for all files
-* @petekubiak
+* @petekubiak @ScottGibb @jamessizeland
 
 # Override the default owners and remove ownership for specific files
 Cargo.toml
