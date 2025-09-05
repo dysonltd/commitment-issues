@@ -16,7 +16,7 @@ Embed git repository metadata into compiled binaries.
 ### Creating a new project from template
 
 A very simple `cargo generate` example template is provided which demonstrates usage of the crate in a natively-compiled binary.
-To use the template, you will need cargo generate installed (for instructions see [here](https://github.com/cargo-generate/cargo-generate/tree/main)).
+To use the template, you will need cargo generate installed (for instructions see [the cargo-generate docs](https://github.com/cargo-generate/cargo-generate/tree/main)).
 
 #### Generate the project
 
