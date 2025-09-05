@@ -16,7 +16,7 @@ Embed git repository metadata into compiled binaries.
 ### Creating a new project from template
 
 A very simple `cargo generate` example template is provided which demonstrates usage of the crate in a natively-compiled binary.
-To use the template, you will need cargo generate installed (for instructions see [here](https://github.com/cargo-generate/cargo-generate/tree/main)).
+To use the template, you will need cargo generate installed (for instructions see [the cargo-generate docs](https://github.com/cargo-generate/cargo-generate/tree/main)).
 
 #### Generate the project
 
@@ -90,6 +90,13 @@ The template's [main.rs](https://github.com/dysonltd/commitment-issues/blob/main
 #### Standard Compile and run
 
 Compile and run your project using your standard process.
+
+## Troubleshooting
+
+This crate relies on git2, which in turn relies on openssl-sys.
+By default, openssl-sys has libssl-dev as a dependency.
+This can sometimes cause issues when building in dev containers or cross-compiling.
+If you see issues relating to being unable to find openssl headers, try activating the `openssl-vendored` feature.
 
 ## Inspecting binary metadata
 

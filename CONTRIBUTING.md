@@ -38,7 +38,7 @@ Thank you for considering contributing to the Commitment issues project! We welc
 
 ## Code Style
 
-- Follow the existing code style. This can be done by running `mega-linter-runner --fix` before your commit. This check will also run in the CI when doing a merge and point out any fixes that are required. More information on MegaLinter can be found [here](https://megalinter.io/latest/)
+- Follow the existing code style. This can be done by running `mega-linter-runner --fix` before your commit. This check will also run in the CI when doing a merge and point out any fixes that are required. [More information on MegaLinter can be found here](https://megalinter.io/latest/)
 - Write clear and concise commit messages.
 - Include comments where necessary.
 
