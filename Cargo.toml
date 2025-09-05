@@ -1,6 +1,6 @@
 [package]
 name = "commitment-issues"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Pete Kubiak <peter.kubiak@dyson.com>"]
 
@@ -14,3 +14,7 @@ syn = "2.0"
 
 [lib]
 proc-macro = true
+
+[features]
+default = []
+vendored-openssl = ["git2/vendored-openssl"]
