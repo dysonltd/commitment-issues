@@ -5,8 +5,8 @@ if variable::get("is_init") {
 		print();
 		print("*** Add the following statements to your build.rs:");
 		print();
-    	print(println!("cargo:rerun-if-changed={}", commitment_issues::find_valid_git_root!()););
-		print(#[cfg(not(target_os = "macos"))]);
+    	print("println!(\"cargo:rerun-if-changed={}\", commitment_issues::find_valid_git_root!());");
+		print("#[cfg(not(target_os = \"macos\"))]");
 		print("println!(\"cargo:rustc-link-arg=-Tmetadata.x\");");
 		print();
 	}
