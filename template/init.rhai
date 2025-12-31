@@ -23,6 +23,7 @@ if variable::get("is_init") {
 	print("*** To add the commitment issues crate to your project, run:");
 	print();
 	print("cargo add --git https://github.com/dysonltd/commitment-issues");
+	print("cargo add --build --git https://github.com/dysonltd/commitment-issues")
 	print();
 
 	variable::set("project-name", "existing project");
