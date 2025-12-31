@@ -154,6 +154,7 @@ cargo objdump -s -j .rodata
 *NOTE* For Mac binaries, replace `.rodata` with `__DATA,__const`.
 
 If your read-only data section is very long, it may be easier to find the metadata with grep by looking for the header:
+
 ```sh
 cargo objdump -s -j .rodata | grep "fffefdfc" -A 20
 ```
