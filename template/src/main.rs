@@ -1,6 +1,4 @@
-use commitment_issues::include_metadata;
-
-include_metadata!();
+commitment_issues::include_metadata!();
 
 fn main() {
     println!("Hello, world!");

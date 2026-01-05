@@ -6,8 +6,6 @@ if variable::get("is_init") {
 		print("*** Add the following statements to your build.rs:");
 		print();
     	print("println!(\"cargo:rerun-if-changed={}\", commitment_issues::find_valid_git_root!());");
-		print("#[cfg(not(target_os = \"macos\"))]");
-		print("println!(\"cargo:rustc-link-arg=-Tmetadata.x\");");
 		print();
 	}
 
@@ -25,6 +23,7 @@ if variable::get("is_init") {
 	print("*** To add the commitment issues crate to your project, run:");
 	print();
 	print("cargo add --git https://github.com/dysonltd/commitment-issues");
+	print("cargo add --build --git https://github.com/dysonltd/commitment-issues");
 	print();
 
 	variable::set("project-name", "existing project");
